@@ -34,7 +34,7 @@ export default async function DashboardPage() {
   });
 
   const lastSyncDate = allPrices.length > 0
-    ? new Date(Math.max(...allPrices.map((p) => p.syncedAt.getTime())))
+    ? new Date(Math.max(...allPrices.map((p: (typeof allPrices)[number]) => p.syncedAt.getTime())))
     : null;
 
   return (
