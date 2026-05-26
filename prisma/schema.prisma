@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Hypothesis {
+  ticker        String   @id
+  company       String
+  sector        String?
+  studyDate     DateTime
+  priceAtStudy  Float?
+  status        String   @default("open")
+  zoneValueLow  Float?
+  zoneValueHigh Float?
+  zoneDeepLow   Float?
+  zoneDeepHigh  Float?
+  zoneHistLow   Float?
+  zoneHistHigh  Float?
+  scenarioNeg   Float?
+  scenarioBase  Float?
+  scenarioOpt   Float?
+  ratiosUsed    String?
+  htmlFile      String?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  priceSyncs   PriceSync[]
+  aiAnalyses   AiAnalysis[]
+  chatSessions ChatSession[]
+}
+
+model PriceSync {
+  id         Int        @id @default(autoincrement())
+  ticker     String
+  price      Float
+  changePct  Float?
+  syncedAt   DateTime   @default(now())
+  source     String     @default("alphavantage")
+  hypothesis Hypothesis @relation(fields: [ticker], references: [ticker])
+}
+
+model AiAnalysis {
+  id          Int        @id @default(autoincrement())
+  ticker      String
+  model       String
+  content     String
+  priceUsed   Float?
+  isCurrent   Boolean    @default(true)
+  generatedAt DateTime   @default(now())
+  hypothesis  Hypothesis @relation(fields: [ticker], references: [ticker])
+}
+
+model ChatSession {
+  id         Int        @id @default(autoincrement())
+  ticker     String
+  messages   String
+  createdAt  DateTime   @default(now())
+  hypothesis Hypothesis @relation(fields: [ticker], references: [ticker])
+}
