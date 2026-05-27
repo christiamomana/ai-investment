@@ -1,10 +1,11 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
-import path from "path";
+import { PrismaLibSql } from "@prisma/adapter-libsql";
 import { HYPOTHESES } from "../lib/hypotheses";
 
-const dbPath = path.resolve(process.cwd(), "db", "arena-alfa.db");
-const adapter = new PrismaBetterSqlite3({ url: dbPath });
+const adapter = new PrismaLibSql({
+  url: process.env.TURSO_DATABASE_URL!,
+  authToken: process.env.TURSO_AUTH_TOKEN,
+});
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
