@@ -6,6 +6,8 @@ import { DefaultChatTransport, type UIMessage } from "ai";
 import { Send, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { FinancialTermText } from "@/components/FinancialTermText";
+import { GlossaryToast, type GlossaryToastData } from "@/components/GlossaryToast";
 
 interface Props {
   ticker: string;
@@ -20,7 +22,15 @@ function getMessageText(msg: UIMessage): string {
 
 export function ChatPanel({ ticker }: Props) {
   const [input, setInput] = useState("");
+  const [glossaryToast, setGlossaryToast] = useState<GlossaryToastData | null>(null);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  function handleTermClick(term: string, definition: string) {
+    clearTimeout(toastTimerRef.current);
+    setGlossaryToast({ term, definition });
+    toastTimerRef.current = setTimeout(() => setGlossaryToast(null), 6000);
+  }
 
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
@@ -59,7 +69,8 @@ export function ChatPanel({ ticker }: Props) {
   return (
     <div className="flex flex-col h-full">
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="relative flex-1 overflow-y-auto p-4 space-y-3">
+        <GlossaryToast toast={glossaryToast} onClose={() => setGlossaryToast(null)} />
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full gap-3 text-center text-zinc-400">
             <div className="text-3xl">💬</div>
@@ -86,7 +97,11 @@ export function ChatPanel({ ticker }: Props) {
                     : "bg-zinc-100 text-zinc-800 rounded-bl-sm"
                 )}
               >
-                {text}
+                {m.role === "assistant" ? (
+                  <FinancialTermText text={text} onTermClick={handleTermClick} />
+                ) : (
+                  text
+                )}
               </div>
             </div>
           );

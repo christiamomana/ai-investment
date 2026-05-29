@@ -3,6 +3,7 @@ import { HYPOTHESES } from "@/lib/hypotheses";
 import { computeSignal } from "@/lib/signals";
 import { HypothesisList } from "@/components/HypothesisList";
 import { DashboardHeader } from "@/components/DashboardHeader";
+import { DashboardChat } from "@/components/DashboardChat";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +44,7 @@ export default async function DashboardPage() {
       <main className="max-w-[1400px] mx-auto px-4 py-6">
         <HypothesisList rows={rows} />
       </main>
+      <DashboardChat rows={rows} />
     </div>
   );
 }
