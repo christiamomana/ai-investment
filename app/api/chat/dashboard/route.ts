@@ -11,7 +11,6 @@ export async function POST(req: Request) {
     model: openai.chat("gpt-4o"),
     system: systemPrompt,
     messages: await convertToModelMessages(messages),
-    maxSteps: 3,
   });
 
   return result.toUIMessageStreamResponse();
